@@ -2,6 +2,8 @@
 <html>
 <head>
 <title>Our Funky HTML Page</title>
+<button onclick="getSensorsBySession('Session1')">Session1</button>
+<button onclick="getSensorsBySession('Session2')">Session2</button>
 <a href="https://crcauhaobi.execute-api.us-east-2.amazonaws.com/default/get-playlist">See Playlist Json</a>
 <meta name="keywords" content="html tutorial template">
 </head>
@@ -9,3 +11,11 @@
 Content goes here.
 </body>
 </html>
+
+<script>
+    function bitch(str){
+    console.log(str);
+}
+</script>
+<script src="../scripts/apiFetches.js">
+</script>
