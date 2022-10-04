@@ -15,14 +15,14 @@ function getSensorsBySession(sessionName){
       }
 
 function getMetadata(){
-      fetch("https://www.google.com/url?q=https://en2mwj3aze.execute-api.us-east-2.amazonaws.com/getMetadata&sa=D&source=docs&ust=1661181160731536&usg=AOvVaw39DbLEa5I_H_NGeSdAr2h1",
+      fetch("http://127.0.0.1:5000/get-items",
       {
-        method: "POST", 
+        method: "GET", 
         headers: { 'Content-Type': 'application/json',
                   'Access-Control-Allow-Origin': "*",
                   "Access-Control-Allow-Methods": "*" }
       })
       .then((res) => res.json())
-      .then((response) => document.write(json.parse(response)))
+      .then((response) => console.log(response))
       
     }
