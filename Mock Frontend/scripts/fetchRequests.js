@@ -28,7 +28,7 @@ function getMetadata(){
       })
       .then((response) => {
         console.log(typeof response)
-        p.innerText = JSON.stringify(response["Items"])
+        p.innerText = response.ID
     });
     
     }
