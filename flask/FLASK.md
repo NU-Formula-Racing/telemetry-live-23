@@ -34,7 +34,7 @@ Default output format: json
 ```
 
 ## How to run ?
-Make sure you are in the right repo (telemetry-23), and cd into ~/flask.
+Make sure you are in the right repo (telemetry-23). Flask-related materials are all in ~/flask.
 
 ```
 python3 -m venv env 
@@ -50,7 +50,7 @@ pip install flask pip install boto3 install flask-cors
 
 Export the environment variable to show where the flask-app is. You don't have to do this again I believe.  
 ```
-export FLASK_APP=app.py
+export FLASK_APP=flask/app.py
 ``` 
 
 Ok. Now run flask.
