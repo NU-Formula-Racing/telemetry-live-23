@@ -1,8 +1,29 @@
 import boto3
+from dynamodb_json import json_util as json
 
 dynamo_client = boto3.client('dynamodb')
-
-def get_items():
-    return dynamo_client.scan(
+data = dynamo_client.scan(
         TableName='SampleSchema'
     )
+
+# the original format that DynamoDB gives us a pretty ugly format,
+# a DynamoDB AttributeValue Object. The point of this is to 
+# unmarshall it and make front-end's job easier.
+# returns: unmarshalled obj
+def unmarshall(raw):
+    deserializer = boto3.dynamodb.types.TypeDeserializer()
+    raw = {k: deserializer.deserialize(v) for k,v in raw.items()}
+
+
+# this will be called by our flask.app. 
+def get_items():
+    data = json.dumps(data)
+    return data
+
+# for testing purposes
+def main():
+    print(type(data))
+    print(data)
+
+if __name__ == "__main__":
+    main()

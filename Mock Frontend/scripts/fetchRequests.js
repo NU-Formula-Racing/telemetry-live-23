@@ -27,8 +27,8 @@ function getMetadata(){
         return res.json();
       })
       .then((response) => {
-        console.log(typeof response)
-        p.innerText = response.ID
+        console.log(response)
+        p.innerText = JSON.stringify(response.Items[0].Sensor1)
     });
     
     }
