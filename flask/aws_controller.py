@@ -1,5 +1,4 @@
 import boto3
-from dynamodb_json import json_util as json
 
 dynamo_client = boto3.client('dynamodb')
 data = dynamo_client.scan(
@@ -17,7 +16,6 @@ def unmarshall(raw):
 
 # this will be called by our flask.app. 
 def get_items():
-    data = json.dumps(data)
     return data
 
 # for testing purposes
