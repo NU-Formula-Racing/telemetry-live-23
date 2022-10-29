@@ -5,9 +5,12 @@ import NumGraphToggle from './NumGraphToggle';
 import Graphs from './Graphs';
 import Numbers from './Numbers';
 
+import { Context } from '../../shared/Context';
+
 import StyledStatus from '../../shared/StyledStatus';
 
 export default class DataDisplay extends Component {
+  static contextType = Context;
   constructor(props) {
     super(props);
 

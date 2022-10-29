@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef } from 'react'
+import React, { useCallback, useState, useEffect, useRef, useContext } from 'react'
 import { max, bisector } from 'd3-array';
 import { MarkerCircle } from '@visx/marker';
 import { useTooltip } from '@visx/tooltip';
@@ -16,6 +16,7 @@ import zoomout from '../../../assets/zoomout.svg';
 import recent from '../../../assets/recent.svg';
 import { GridRows, GridColumns } from '@visx/grid';
 import { TooltipWithBounds } from '@visx/tooltip';
+import { Context} from "../../shared/Context"
 
 /*****************  INIT (but its british??)  ****************/
 const n = 30; // amount of seconds to show
@@ -27,7 +28,8 @@ function initialise() {
     for (var i = 0; i < data_length; i++) {
         var obj = {
             time: ++time,
-            value: Math.floor(Math.random() * 100)
+            // value: Math.floor(Math.random() * 100)
+            value: 0
         };
         arr.push(obj);
     }
@@ -35,6 +37,7 @@ function initialise() {
 }
 
 export default function Graph(props) {
+    let context = useContext(Context);
     /*****************  CONSTANTS  ****************/
     const height = 300
     const width = props.width > 500 ? props.width * 0.9 : 450
@@ -59,6 +62,7 @@ export default function Graph(props) {
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
     const [isScrolling, setScrolling] = useState(false)
     const wheelTimeout = useRef()
+    const [count, setCount] = useState(0)
 
     
     /*****************  UPDATERS  ****************/
@@ -81,13 +85,18 @@ export default function Graph(props) {
         }));
     }
     function updateData(gd, e) {
+        console.log(context.sensorData)
+        
+        let tvPair = context.sensorData["FL_BRAKE_TEMP"][count]
         let start = gd.start
         if (gd.end >= n) { start = gd.start + 1}
         let end = gd.end + 1;
         var obj = {
             time: gd.lineData.length,
-            value: Math.floor(Math.random() * 100)
+            // value: Math.floor(Math.random() * 100)
+            value: tvPair[1]
         };
+        setCount(count + 1)
         let temp = [...gd.lineData];
         temp.push(obj);
         if (isScrolling){

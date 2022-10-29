@@ -3,9 +3,12 @@ import Select from 'react-select';
 import styled from "styled-components";
 import SensorButton from './SensorButton';
 
+import { Context} from '../shared/Context';
+
 import DndList from '../shared/DnDList';
 
 export default class SensorDropdown extends Component {
+    static contextType = Context;
     constructor(props){
         super(props)
         // all available sensor options
@@ -42,10 +45,10 @@ export default class SensorDropdown extends Component {
           // REPLACE THIS
           // PART OF SESSION TOBE DYNAMIC
           let reqBody = {"desiredSensors": this.desiredSensors, "nameOfSession": "DriveDay10.7.22"}
-          console.log(reqBody)
+          // console.log(reqBody)
 
           // POST request with current sensors selected to use for datpoint plotting later
-          const sensorData = fetch("http://127.0.0.1:5000/get-sensors", 
+          var sensorData = fetch("http://127.0.0.1:5000/get-sensors", 
           {
             method: "POST", 
             headers: { 'Content-Type': 'application/json',
@@ -61,7 +64,8 @@ export default class SensorDropdown extends Component {
           const retrieveSensorAPI = () => {
           sensorData.then((a) => {
           this.sensorData = a;
-          console.log(this.sensorData)
+          this.context.setSensorData(a)
+          console.log(this.context.sensorData)
           });
           };
           retrieveSensorAPI();
