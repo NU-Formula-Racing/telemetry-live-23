@@ -47,6 +47,10 @@ export default function Graph(props) {
     // data accessors
     const getX = (d) => d.time;
     const getY = (d) => d.value;
+    const ExampleSensorsLettersToNames = {
+        "Sensor A": "FL_BRAKE_TEMP",
+        "Sensor B": "FL_WHEEL_SPEED"
+      }
 
     // scales
     let xScaleInit = scaleLinear({
@@ -63,6 +67,7 @@ export default function Graph(props) {
     const [isScrolling, setScrolling] = useState(false)
     const wheelTimeout = useRef()
     const [count, setCount] = useState(0)
+    var count_ = 0
 
     
     /*****************  UPDATERS  ****************/
@@ -84,19 +89,30 @@ export default function Graph(props) {
             yScale: yscale
         }));
     }
+
+    function parseTimeInt(timeStr){
+        let timeArr = timeStr.split(":")
+        return parseInt(timeArr[0])*60+parseInt(timeArr[1])
+    }
     function updateData(gd, e) {
         console.log(context.sensorData)
-        
-        let tvPair = context.sensorData["FL_BRAKE_TEMP"][count]
+        setCount(count + 1)
+        let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]]
+        var tvPair = sensorArr[sensorArr.length-1]
+        if (count >= sensorArr.length) {
+            let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1]
+        }
+        else{
+            tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][count]
+        }
         let start = gd.start
         if (gd.end >= n) { start = gd.start + 1}
         let end = gd.end + 1;
         var obj = {
-            time: gd.lineData.length,
-            // value: Math.floor(Math.random() * 100)
+            // time: gd.lineData.length,
+            time: parseTimeInt(tvPair[0]),
             value: tvPair[1]
         };
-        setCount(count + 1)
         let temp = [...gd.lineData];
         temp.push(obj);
         if (isScrolling){

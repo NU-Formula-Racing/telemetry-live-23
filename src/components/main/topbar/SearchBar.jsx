@@ -65,7 +65,7 @@ return user;
 const printAddress = () => {
 address.then((a) => {
 // console.log(a.Items[0]["Session Name"]);
-console.log(parseDates(a.Items))
+// console.log(parseDates(a.Items))
 fileList = parseDates(a.Items)
 
 });
@@ -74,7 +74,7 @@ fileList = parseDates(a.Items)
 function parseDates(inputArray) {
 let res = []
 for (let i = 0; i < inputArray.length; i++) {
-console.log(inputArray[i])
+// console.log(inputArray[i])
 let newDict = {}
 newDict["name"] = inputArray[i]["Session Name"];
 let splitDates = inputArray[i]["Date"].split(",");
@@ -86,6 +86,7 @@ return res
 }
 
 export default class SearchBar extends Component {
+  static contextType = Context;
   constructor(props){
     super(props);
     this.state = {searchVal: null}
@@ -100,14 +101,8 @@ export default class SearchBar extends Component {
     this.setState({searchVal : value})
     this.myRef.current.blur()
     printAddress();
-    // const printAddress = () => {
-    //   address.then((a) => {
-    //     console.log(a);
-    //   });
-    // };
-    // printAddress();
-
-
+    this.context.setSession(value);
+    console.log(this.context.session)
   };
 
   

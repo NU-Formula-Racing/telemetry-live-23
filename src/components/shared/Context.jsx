@@ -14,6 +14,7 @@ class ContextProvider extends Component{
       dragging: false,
       sensorData: [], // make object than list
       session: "",
+      selectedSensors: [],
       setMouseCoords: (x, y) => {
         this.setState({ mouseX: x, mouseY: y });
       },
@@ -25,6 +26,11 @@ class ContextProvider extends Component{
       },
       setSession: (x) => {
         this.setState({session: x})
+      },
+      pushSensorStack: (x) => {
+        this.setState({ 
+          selectedSensors: this.state.selectedSensors.concat([x])
+        })
       }
     };
   }
