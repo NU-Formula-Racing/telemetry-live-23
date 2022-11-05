@@ -102,7 +102,7 @@ export default class SearchBar extends Component {
     this.myRef.current.blur()
     printAddress();
     this.context.setSession(value);
-    console.log(this.context.session)
+    // console.log(this.context.session)
   };
 
   

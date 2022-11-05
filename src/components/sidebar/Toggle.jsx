@@ -1,6 +1,9 @@
 import styled from 'styled-components';
+import { Context } from "../shared/Context"
+import React, { useCallback, useState, useEffect, useRef, useContext } from 'react'
 
 export default function Toggle(props) {
+
   return (
     <Holder>
       <>

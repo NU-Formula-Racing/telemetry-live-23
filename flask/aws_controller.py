@@ -1,29 +1,44 @@
 import boto3
-from dynamodb_json import json_util as json
+import json
+from boto3.dynamodb.conditions import Key
 
 dynamo_client = boto3.client('dynamodb')
-data = dynamo_client.scan(
+
+def get_items():
+    return dynamo_client.scan(
         TableName='SampleSchema'
     )
 
-# the original format that DynamoDB gives us a pretty ugly format,
-# a DynamoDB AttributeValue Object. The point of this is to 
-# unmarshall it and make front-end's job easier.
-# returns: unmarshalled obj
-def unmarshall(raw):
-    deserializer = boto3.dynamodb.types.TypeDeserializer()
-    raw = {k: deserializer.deserialize(v) for k,v in raw.items()}
+def get_session(req_json):
 
+    # TODO implement
+    client = boto3.resource("dynamodb")
+    table = client.Table("SampleSchema")
+    print(req_json)
+    # event is replicating the entire json of that specific table
+    event = dynamo_client.scan(
+        TableName='SampleSchema'
+    )
+    response = table.get_item(
+        Key=req_json
+        )
+    print(response)
+    attribs = (response["Item"])
+    # parse attribs
+    res = {}
+    # output sensor data in an array
+    for key in attribs.keys():
+        # add key, value
+        if "Sensor" in key:
+            res[key] = attribs[key]
 
-# this will be called by our flask.app. 
-def get_items():
-    data = json.dumps(data)
-    return data
-
-# for testing purposes
-def main():
-    print(type(data))
-    print(data)
-
-if __name__ == "__main__":
-    main()
+    return {"isBase64Encoded": "false",
+    'statusCode': 200,
+    'headers': {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': 'true',
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Headers': "*"
+        },
+    "body": res
+        }

@@ -15,6 +15,7 @@ class ContextProvider extends Component{
       sensorData: [], // make object than list
       session: "",
       selectedSensors: [],
+      live: false,
       setMouseCoords: (x, y) => {
         this.setState({ mouseX: x, mouseY: y });
       },
@@ -29,7 +30,10 @@ class ContextProvider extends Component{
       },
       setSelectedSensors: (x) => {
         this.setState({selectedSensors: x})
-      }
+      },
+      setIsLive: (x) => {
+        this.setState({ live: x });
+      },
     };
   }
   myFunction = () => {

@@ -21,7 +21,7 @@ import { Context} from "../../shared/Context"
 
 
 /*****************  INIT (but its british??)  ****************/
-const n = 30; // amount of seconds to show
+const n = 100; // amount of seconds to show
 let initData = initialise(); //data arr
 function initialise() {
     var time = -1;
@@ -74,6 +74,16 @@ export default function Graph(props) {
 
     
     /*****************  UPDATERS  ****************/
+    // automate the clicking (or updating) of the live graph
+    useEffect(() => {
+        const interval = setInterval(() => {
+          if (context.live) {
+            document.getElementById("clickMe").click();
+          }
+        }, 500);
+        return () => clearInterval(interval);
+      }, []);
+
     function updateScales(){
         let start_idx = Math.floor(graphData.start)
         let fake_idx = max([Math.ceil(graphData.end)-1, 0])
@@ -98,8 +108,8 @@ export default function Graph(props) {
         return parseInt(timeArr[0])*60+parseInt(timeArr[1])
     }
     function updateData(gd, e) {
-        console.log(context.sensorData)
-        console.log(context.selectedSensors)
+        // console.log(context.sensorData)
+        // console.log(context.selectedSensors)
         setCount(count + 1)
         let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]]
         var tvPair = sensorArr[sensorArr.length-1]
@@ -286,7 +296,7 @@ export default function Graph(props) {
             onMouseEnter={() => {props.sendIndex(); props.sendStart();}}
             onMouseLeave={() => {props.removeIndex(); props.removeStart();}}
         >
-            <button onClick={(e) => updateData(graphData,e)}>update</button> <br/>
+            <button id="clickMe" onClick={(e) => updateData(graphData,e)}>update</button> <br/>
             {/* navigation buttons */}
             <ButtonTray width={width}>
                 <div>
