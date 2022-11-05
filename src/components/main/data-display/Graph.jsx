@@ -18,6 +18,8 @@ import { GridRows, GridColumns } from '@visx/grid';
 import { TooltipWithBounds } from '@visx/tooltip';
 import { Context} from "../../shared/Context"
 
+
+
 /*****************  INIT (but its british??)  ****************/
 const n = 30; // amount of seconds to show
 let initData = initialise(); //data arr
@@ -36,6 +38,8 @@ function initialise() {
     return arr;
 }
 
+// CONTINUOUSLY CALL API TO UPDATE REACT ON CHANGES IN
+
 export default function Graph(props) {
     let context = useContext(Context);
     /*****************  CONSTANTS  ****************/
@@ -51,7 +55,6 @@ export default function Graph(props) {
         "Sensor A": "FL_BRAKE_TEMP",
         "Sensor B": "FL_WHEEL_SPEED"
       }
-
     // scales
     let xScaleInit = scaleLinear({
         domain: [0, max(initData, getX)],
@@ -96,6 +99,7 @@ export default function Graph(props) {
     }
     function updateData(gd, e) {
         console.log(context.sensorData)
+        console.log(context.selectedSensors)
         setCount(count + 1)
         let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]]
         var tvPair = sensorArr[sensorArr.length-1]
@@ -130,6 +134,7 @@ export default function Graph(props) {
         }
         handleTooltip(e);
     }
+
 
     /*****************  MOUSE AND KEY SHITSHOW  ****************/
     function lockWheel(){

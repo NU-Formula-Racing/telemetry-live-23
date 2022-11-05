@@ -27,12 +27,13 @@ class ContextProvider extends Component{
       setSession: (x) => {
         this.setState({session: x})
       },
-      pushSensorStack: (x) => {
-        this.setState({ 
-          selectedSensors: this.state.selectedSensors.concat([x])
-        })
+      setSelectedSensors: (x) => {
+        this.setState({selectedSensors: x})
       }
     };
+  }
+  myFunction = () => {
+    this.props.updateItem(this.state)
   }
 
   render() {
