@@ -46,7 +46,13 @@ export default class SensorDropdown extends Component {
           console.log(this.context.selectedSensors)
           // REPLACE THIS
           // PART OF SESSION TOBE DYNAMIC
-          let reqBody = {"desiredSensors": this.desiredSensors, "nameOfSession": this.context.session["name"]}
+          let reqBody = {}
+          if (this.context.live) {
+          reqBody = {"desiredSensors": this.desiredSensors, "nameOfSession": this.context.session}
+          }
+          else {
+            reqBody = {"desiredSensors": this.desiredSensors, "nameOfSession": this.context.session["name"]}
+          }
           // console.log(reqBody)
 
           // POST request with current sensors selected to use for datpoint plotting later

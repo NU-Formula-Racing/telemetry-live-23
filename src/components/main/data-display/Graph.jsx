@@ -21,7 +21,7 @@ import { Context} from "../../shared/Context"
 
 
 /*****************  INIT (but its british??)  ****************/
-const n = 100; // amount of seconds to show
+const n = 1000; // amount of seconds to show
 let initData = initialise(); //data arr
 function initialise() {
     var time = -1;
@@ -70,8 +70,7 @@ export default function Graph(props) {
     const [isScrolling, setScrolling] = useState(false)
     const wheelTimeout = useRef()
     const [count, setCount] = useState(0)
-    var count_ = 0
-
+    var historical_count = 0
     
     /*****************  UPDATERS  ****************/
     // automate the clicking (or updating) of the live graph
@@ -83,6 +82,20 @@ export default function Graph(props) {
         }, 500);
         return () => clearInterval(interval);
       }, []);
+
+    //   second use effect spams uppon initialization
+    //   useEffect(() => {
+    //     const interval = setInterval(() => {
+    //       if (historical_count < 12) {
+    //         document.getElementById("clickMe").click();
+    //         historical_count += 1
+    //         // console.log(count)
+    //       }
+    //     }, 50);
+    //     return () => clearInterval(interval);
+    //   }, []);
+
+      /***************** UPDATES **********************/
 
     function updateScales(){
         let start_idx = Math.floor(graphData.start)
@@ -110,8 +123,14 @@ export default function Graph(props) {
     function updateData(gd, e) {
         // console.log(context.sensorData)
         // console.log(context.selectedSensors)
-        setCount(count + 1)
+        
+        // setCount(count + 1)
         let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]]
+        if (count < sensorArr.length-1) {
+            setCount(count + 1)
+        }
+        console.log(sensorArr.length-1)
+        console.log(count)
         var tvPair = sensorArr[sensorArr.length-1]
         if (count >= sensorArr.length) {
             let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1]

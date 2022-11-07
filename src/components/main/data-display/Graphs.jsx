@@ -36,7 +36,7 @@ export default function Graphs(props) {
             };
             retrieveSensorAPI();
       }
-    }, 1000);
+    }, 500);
     return () => clearInterval(interval);
   }, []);
 
