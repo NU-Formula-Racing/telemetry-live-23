@@ -69,6 +69,7 @@ export default function Graph(props) {
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
     const [isScrolling, setScrolling] = useState(false)
     const wheelTimeout = useRef()
+    const buttonRef = useRef(null)
     const [count, setCount] = useState(0)
     var historical_count = 0
     
