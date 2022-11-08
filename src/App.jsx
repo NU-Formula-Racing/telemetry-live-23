@@ -4,6 +4,8 @@ import { createGlobalStyle } from 'styled-components';
 import Sidebar from './components/sidebar/Sidebar';
 import Main from './components/main/Main';
 
+import React, { useCallback, useState, useEffect, useRef, useContext } from 'react'
+
 import { Context } from './components/shared/Context';
 
 export default class App extends Component {
@@ -16,7 +18,17 @@ export default class App extends Component {
       isLive: false,
       currentSensors: [],
       sessionName: ''
-    };
+    }
+  }
+  updateContextLive() {
+    this.context.setIsLive(this.state.isLive)
+    // console.log(this.context.session)
+  }
+  componentDidMount() {
+    // every second, update the context's live to the current this.state.isLIve value for later
+    const intervalId = setInterval(() => {
+      this.updateContextLive()
+    }, 1000);
   }
 
   handleMouseDown = (e) => {
@@ -28,6 +40,7 @@ export default class App extends Component {
     this.context.setMouseCoords(e.clientX, e.clientY);
     this.context.setDragging(false);
   }
+
 
   render() {
     return (

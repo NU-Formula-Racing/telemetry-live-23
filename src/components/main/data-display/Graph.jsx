@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef } from 'react'
+import React, { useCallback, useState, useEffect, useRef, useContext } from 'react'
 import { max, bisector } from 'd3-array';
 import { MarkerCircle } from '@visx/marker';
 import { useTooltip } from '@visx/tooltip';
@@ -16,9 +16,12 @@ import zoomout from '../../../assets/zoomout.svg';
 import recent from '../../../assets/recent.svg';
 import { GridRows, GridColumns } from '@visx/grid';
 import { TooltipWithBounds } from '@visx/tooltip';
+import { Context} from "../../shared/Context"
+
+
 
 /*****************  INIT (but its british??)  ****************/
-const n = 30; // amount of seconds to show
+const n = 1000; // amount of seconds to show
 let initData = initialise(); //data arr
 function initialise() {
     var time = -1;
@@ -27,14 +30,18 @@ function initialise() {
     for (var i = 0; i < data_length; i++) {
         var obj = {
             time: ++time,
-            value: Math.floor(Math.random() * 100)
+            // value: Math.floor(Math.random() * 100)
+            value: 0
         };
         arr.push(obj);
     }
     return arr;
 }
 
+// CONTINUOUSLY CALL API TO UPDATE REACT ON CHANGES IN
+
 export default function Graph(props) {
+    let context = useContext(Context);
     /*****************  CONSTANTS  ****************/
     const height = 300
     const width = props.width > 500 ? props.width * 0.9 : 450
@@ -44,7 +51,10 @@ export default function Graph(props) {
     // data accessors
     const getX = (d) => d.time;
     const getY = (d) => d.value;
-
+    const ExampleSensorsLettersToNames = {
+        "Sensor A": "FL_BRAKE_TEMP",
+        "Sensor B": "FL_WHEEL_SPEED"
+      }
     // scales
     let xScaleInit = scaleLinear({
         domain: [0, max(initData, getX)],
@@ -59,9 +69,35 @@ export default function Graph(props) {
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
     const [isScrolling, setScrolling] = useState(false)
     const wheelTimeout = useRef()
-
+    const buttonRef = useRef(null)
+    const [count, setCount] = useState(0)
+    var historical_count = 0
     
     /*****************  UPDATERS  ****************/
+    // automate the clicking (or updating) of the live graph
+    useEffect(() => {
+        const interval = setInterval(() => {
+          if (context.live) {
+            document.getElementById("clickMe").click();
+          }
+        }, 500);
+        return () => clearInterval(interval);
+      }, []);
+
+    //   second use effect spams uppon initialization
+    //   useEffect(() => {
+    //     const interval = setInterval(() => {
+    //       if (historical_count < 12) {
+    //         document.getElementById("clickMe").click();
+    //         historical_count += 1
+    //         // console.log(count)
+    //       }
+    //     }, 50);
+    //     return () => clearInterval(interval);
+    //   }, []);
+
+      /***************** UPDATES **********************/
+
     function updateScales(){
         let start_idx = Math.floor(graphData.start)
         let fake_idx = max([Math.ceil(graphData.end)-1, 0])
@@ -80,13 +116,36 @@ export default function Graph(props) {
             yScale: yscale
         }));
     }
+
+    function parseTimeInt(timeStr){
+        let timeArr = timeStr.split(":")
+        return parseInt(timeArr[0])*60+parseInt(timeArr[1])
+    }
     function updateData(gd, e) {
+        // console.log(context.sensorData)
+        // console.log(context.selectedSensors)
+        
+        // setCount(count + 1)
+        let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]]
+        if (count < sensorArr.length-1) {
+            setCount(count + 1)
+        }
+        console.log(sensorArr.length-1)
+        console.log(count)
+        var tvPair = sensorArr[sensorArr.length-1]
+        if (count >= sensorArr.length) {
+            let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1]
+        }
+        else{
+            tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][count]
+        }
         let start = gd.start
         if (gd.end >= n) { start = gd.start + 1}
         let end = gd.end + 1;
         var obj = {
-            time: gd.lineData.length,
-            value: Math.floor(Math.random() * 100)
+            // time: gd.lineData.length,
+            time: parseTimeInt(tvPair[0]),
+            value: tvPair[1]
         };
         let temp = [...gd.lineData];
         temp.push(obj);
@@ -105,6 +164,7 @@ export default function Graph(props) {
         }
         handleTooltip(e);
     }
+
 
     /*****************  MOUSE AND KEY SHITSHOW  ****************/
     function lockWheel(){
@@ -256,7 +316,7 @@ export default function Graph(props) {
             onMouseEnter={() => {props.sendIndex(); props.sendStart();}}
             onMouseLeave={() => {props.removeIndex(); props.removeStart();}}
         >
-            <button onClick={(e) => updateData(graphData,e)}>update</button> <br/>
+            <button id="clickMe" onClick={(e) => updateData(graphData,e)}>update</button> <br/>
             {/* navigation buttons */}
             <ButtonTray width={width}>
                 <div>

@@ -1,21 +1,25 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
+import { Context } from '../shared/Context';
 
 export default function NameInput(props) {
+let context = useContext(Context);
   let [focus, setFocus] = useState(false);
   let [input, setInput] = useState('');
 
   const handleKeyPress = (e) => {
       if (e.keyCode === 13) {
           e.target.blur();
+          context.setSession(input)
       }
   }
 
   const handleBlur = () => {
       setFocus(false);
       props.setSessionName(input);
+      context.setSession(input)
   }
 
   return(
