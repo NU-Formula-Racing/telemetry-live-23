@@ -9,7 +9,7 @@ export default function Graphs(props) {
  // IF LIVE IS ON, THEN FEED TO API
     useEffect(() => {
     const interval = setInterval(() => {
-      if (context.live) {
+      if (context.live && context.session) {
       // console.log(context.selectedSensors);
                   let reqBody = {"desiredSensors": context.selectedSensors, "nameOfSession": context.session}
             // console.log(reqBody)

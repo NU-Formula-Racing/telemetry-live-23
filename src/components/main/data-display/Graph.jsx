@@ -71,30 +71,39 @@ export default function Graph(props) {
     const wheelTimeout = useRef()
     const buttonRef = useRef(null)
     const [count, setCount] = useState(0)
+    const [clickCount, setClickCount] = useState(100)
     var historical_count = 0
     
     /*****************  UPDATERS  ****************/
     // automate the clicking (or updating) of the live graph
+
+    // autopopulate the graph
     useEffect(() => {
         const interval = setInterval(() => {
+        let graphsArr = document.getElementsByClassName("clickMe")
           if (context.live) {
-            document.getElementById("clickMe").click();
+            for (let i = 0; i < graphsArr.length; i++) {
+                graphsArr[i].click();
+              }
           }
         }, 500);
         return () => clearInterval(interval);
       }, []);
 
-    //   second use effect spams uppon initialization
-    //   useEffect(() => {
-    //     const interval = setInterval(() => {
-    //       if (historical_count < 12) {
-    //         document.getElementById("clickMe").click();
-    //         historical_count += 1
-    //         // console.log(count)
-    //       }
-    //     }, 50);
-    //     return () => clearInterval(interval);
-    //   }, []);
+      useEffect(() => {
+        const interval = setInterval(() => {
+        let graphsArr = document.getElementsByClassName("clickMe")
+        console.log(count, clickCount)
+        setClickCount(clickCount+1)
+          if (!context.live && count < clickCount) {
+            for (let i = 0; i < graphsArr.length; i++) {
+                graphsArr[i].click();
+              }
+          }
+        }, 400);
+        return () => clearInterval(interval);
+      }, []);
+
 
       /***************** UPDATES **********************/
 
@@ -122,11 +131,12 @@ export default function Graph(props) {
         return parseInt(timeArr[0])*60+parseInt(timeArr[1])
     }
     function updateData(gd, e) {
-        // console.log(context.sensorData)
+        console.log(context.sensorData)
         // console.log(context.selectedSensors)
         
         // setCount(count + 1)
         let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]]
+        setClickCount(sensorArr.length)
         if (count < sensorArr.length-1) {
             setCount(count + 1)
         }
@@ -145,6 +155,8 @@ export default function Graph(props) {
         var obj = {
             // time: gd.lineData.length,
             time: parseTimeInt(tvPair[0]),
+            // time: parseInt(tvPair[0]),
+
             value: tvPair[1]
         };
         let temp = [...gd.lineData];
@@ -316,7 +328,7 @@ export default function Graph(props) {
             onMouseEnter={() => {props.sendIndex(); props.sendStart();}}
             onMouseLeave={() => {props.removeIndex(); props.removeStart();}}
         >
-            <button id="clickMe" onClick={(e) => updateData(graphData,e)}>update</button> <br/>
+            <button className='clickMe' onClick={(e) => updateData(graphData,e)}>update</button> <br/>
             {/* navigation buttons */}
             <ButtonTray width={width}>
                 <div>
