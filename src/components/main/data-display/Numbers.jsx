@@ -11,9 +11,7 @@ export default function Numbers(props) {
     useEffect(() => {
     const interval = setInterval(() => {
       if (context.live && context.session) {
-      // console.log(context.selectedSensors);
                   let reqBody = {"desiredSensors": context.selectedSensors, "nameOfSession": context.session}
-            // console.log(reqBody)
     
             // POST request with current sensors selected to use for datpoint plotting later
             var sensorData = fetch("http://127.0.0.1:5000/get-sensors", 
@@ -32,7 +30,6 @@ export default function Numbers(props) {
             const retrieveSensorAPI = () => {
             sensorData.then((a) => {
             context.setSensorData(a)
-            console.log(context.sensorData)
             });
             };
             retrieveSensorAPI();
@@ -43,12 +40,11 @@ export default function Numbers(props) {
 
 
   const ExampleSensorsLettersToNames = {
-    "Sensor A": "FL_BRAKE_TEMP",
-    "Sensor B": "FL_WHEEL_SPEED"
+    "Sensor A": ["FL_BRAKE_TEMP", "°C"],
+    "Sensor B": ["FL_WHEEL_SPEED", "m/s"]
   }
   //context.sensorData[ExampleSensorsLettersToNames[e.value]][context.sensorData[ExampleSensorsLettersToNames[e.value]].length-1][1]}
   function updateSensorValue(sensorName) {
-    console.log(context.sensorData[sensorName].length-1)
     return context.sensorData[sensorName][context.sensorData[sensorName].length-1][1]
   }
   return (
@@ -65,10 +61,10 @@ export default function Numbers(props) {
           return (
             <Number
               //rerender={() => {props.rerender()}}
-              value={updateSensorValue(ExampleSensorsLettersToNames[e.value])}
+              value={updateSensorValue(ExampleSensorsLettersToNames[e.value][0])}
               // value={3}
               percentage={e.id}
-              unit={'m/s'}
+              unit={(ExampleSensorsLettersToNames[e.value][1])}
               label={e.label}
               key={index}
             />

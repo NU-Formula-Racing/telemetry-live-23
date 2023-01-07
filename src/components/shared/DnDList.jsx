@@ -89,7 +89,6 @@ export default function DndList(props) {
         }
       }
     }
-    // console.log(mouseX);
   }, [context.dragging])
 
   useEffect(() => {

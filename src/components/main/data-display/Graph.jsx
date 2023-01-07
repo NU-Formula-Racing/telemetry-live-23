@@ -38,6 +38,8 @@ function initialise() {
     return arr;
 }
 
+
+
 // CONTINUOUSLY CALL API TO UPDATE REACT ON CHANGES IN
 
 export default function Graph(props) {
@@ -52,8 +54,8 @@ export default function Graph(props) {
     const getX = (d) => d.time;
     const getY = (d) => d.value;
     const ExampleSensorsLettersToNames = {
-        "Sensor A": "FL_BRAKE_TEMP",
-        "Sensor B": "FL_WHEEL_SPEED"
+        "Sensor A": ["FL_BRAKE_TEMP", "Temperature (°C)"],
+        "Sensor B": ["FL_WHEEL_SPEED", "Speed (m/s)"]
       }
     // scales
     let xScaleInit = scaleLinear({
@@ -93,7 +95,6 @@ export default function Graph(props) {
       useEffect(() => {
         const interval = setInterval(() => {
         let graphsArr = document.getElementsByClassName("clickMe")
-        console.log(count, clickCount)
         setClickCount(clickCount+1)
           if (!context.live && count < clickCount) {
             for (let i = 0; i < graphsArr.length; i++) {
@@ -126,37 +127,59 @@ export default function Graph(props) {
         }));
     }
 
-    function parseTimeInt(timeStr){
-        let timeArr = timeStr.split(":")
-        return parseInt(timeArr[0])*60+parseInt(timeArr[1])
+    // function parseTimeInt(timeStr){
+    //     let timeArr = timeStr.split(":")
+    //     return parseInt(timeArr[0])*60+parseInt(timeArr[1])
+    // }
+
+    function parseUnixToStr(unixVal) {
+        let unix_timestamp = unixVal
+        // Create a new JavaScript Date object based on the timestamp
+        // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+        var date = new Date(unix_timestamp * 1000);
+        // Hours part from the timestamp
+        var hours = date.getHours();
+        // Minutes part from the timestamp
+        var minutes = "0" + date.getMinutes();
+        // Seconds part from the timestamp
+        var seconds = "0" + date.getSeconds();
+
+        // Will display time in 10:30:23 format
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        return formattedTime
     }
+
+    function parseSecToTime(seconds) {
+        var hours = Math.floor(seconds / 3600)
+        var minutes = Math.floor((seconds % 3600) / 60)
+        var seconds = (seconds % 3600) % 60
+        return hours + ":" + minutes + ":" + seconds
+
+    }
+
     function updateData(gd, e) {
-        console.log(context.sensorData)
-        // console.log(context.selectedSensors)
         
         // setCount(count + 1)
-        let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]]
+        let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]]
         setClickCount(sensorArr.length)
         if (count < sensorArr.length-1) {
             setCount(count + 1)
         }
-        console.log(sensorArr.length-1)
-        console.log(count)
         var tvPair = sensorArr[sensorArr.length-1]
         if (count >= sensorArr.length) {
-            let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1]
+            let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1[0]]
         }
         else{
-            tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][count]
+            tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][count]
         }
         let start = gd.start
         if (gd.end >= n) { start = gd.start + 1}
         let end = gd.end + 1;
-        var obj = {
-            // time: gd.lineData.length,
-            time: parseTimeInt(tvPair[0]),
-            // time: parseInt(tvPair[0]),
+        var firstTime =  context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][0][0]
 
+        var currTime = parseUnixToStr(tvPair[0])
+        var obj = {
+            time: tvPair[0]-firstTime,
             value: tvPair[1]
         };
         let temp = [...gd.lineData];
@@ -229,10 +252,6 @@ export default function Graph(props) {
     }
 
     function scroll(gd, dir, amt,e){
-        // if (liveData) {
-        //     console.log("kill me now")
-        //     return
-        // }
         let start, end;
         if (dir == "right"){
             if (gd.end < max(gd.lineData, getX) - amt) {
@@ -287,10 +306,6 @@ export default function Graph(props) {
     useEffect(() => {
         updateScales()
     }, [graphData.lineData, graphData.start, graphData.end])
-    // useEffect(() => {
-    //     console.log(isScrolling)
-    // }, [isScrolling])
-   
     /*****************  TOOLTIP BULLSHIT  ****************/
     // takes left of time
     const bisectTime = bisector((d) => d.time).left;
@@ -322,6 +337,8 @@ export default function Graph(props) {
         [showTooltip, graphData.yScale, graphData.xScale],
       );
 
+
+
   return (
         <GraphContainer
             onKeyDown={(e) => checkKey(e)}
@@ -351,8 +368,8 @@ export default function Graph(props) {
                     {/* axis and grids */}
                     <GridRows scale={graphData.yScale} width={width - graph_offset*3} stroke="#e0e0e0"/>
                     <GridColumns scale={graphData.xScale} height={height-60} stroke="#e0e0e0" top={30}/>
-                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"bottom axis label"}/>
-                    <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={"left axis label"}/>
+                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"Time"} tickFormat={(v: Date, i: number) =>parseSecToTime(i*100)} />
+                    <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={ExampleSensorsLettersToNames[props.sensorName][1]}/>
                     {/* plots line */}
                     {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (
                         <circle
