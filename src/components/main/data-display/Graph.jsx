@@ -54,8 +54,15 @@ export default function Graph(props) {
     const getX = (d) => d.time;
     const getY = (d) => d.value;
     const ExampleSensorsLettersToNames = {
-        "Sensor A": ["FL_BRAKE_TEMP", "Temperature (°C)"],
-        "Sensor B": ["FL_WHEEL_SPEED", "Speed (m/s)"]
+        "Front Left Wheel Speed": ["FL_WHEEL_SPEED", "Speed (m/s)"],
+        "Brake Pressure": ["BRAKE_PRESSURE", "Pounds/Square-Inch (PSI)"],
+        "HV Battery Voltage": ["HV_BATTERY_VOLTAGE", "Volts (V)"],
+        "Battery Temperature": ["BATTERY_TEMP", "Temperature (°C)"],
+        "Coolant Temperature": ["COOLANT_TEMP", "Temperature (°C)"],
+        "Power Output": ["POWER_OUTPUT", "Power (kW)"],
+        "State of Charge (SoC)": ["CHARGE_STATE", "Percent (%)"],
+        "Throttle": ["THROTTLE", "Percent (%)"],
+        "Motor Temperature": ["MOTOR_TEMP", "Temperature (°C)"]
       }
     // scales
     let xScaleInit = scaleLinear({
@@ -101,7 +108,7 @@ export default function Graph(props) {
                 graphsArr[i].click();
               }
           }
-        }, 400);
+        }, 1000);
         return () => clearInterval(interval);
       }, []);
 
@@ -161,13 +168,18 @@ export default function Graph(props) {
         
         // setCount(count + 1)
         let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]]
-        setClickCount(sensorArr.length)
+        // setClickCount(sensorArr.length)
+        if (sensorArr) {
+
         if (count < sensorArr.length-1) {
             setCount(count + 1)
         }
         var tvPair = sensorArr[sensorArr.length-1]
         if (count >= sensorArr.length) {
-            let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1[0]]
+            if (sensorArr !== []) {
+                console.log(context.sensorData[ExampleSensorsLettersToNames[props.sensorName]])
+                let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1[0]]
+            }
         }
         else{
             tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][count]
@@ -198,6 +210,7 @@ export default function Graph(props) {
               }));
         }
         handleTooltip(e);
+    }
     }
 
 

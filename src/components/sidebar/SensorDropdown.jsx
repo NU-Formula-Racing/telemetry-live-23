@@ -133,8 +133,8 @@ export default class SensorDropdown extends Component {
 
 //{this.selected.map((x) => (<p>{x.label}</p>))}
 let ExampleSensorsByGroups = [
-    {group:"Safety Sensors", sensors: ["Sensor A", "Sensor B", "Sensor C", "Sensor Q", "Sensor R", "Sensor S", "Sensor T", "Sensor U", "Sensor V"]},
-    {group:"Chasis Sensors", sensors: ["Sensor D", "Sensor E", "Sensor F"]},
+    {group:"Safety Sensors", sensors: ["Front Left Wheel Speed", "Brake Pressure", "HV Battery Voltage", "Battery Temperature", "Coolant Temperature", "Power Output", "State of Charge (SoC)", "Throttle", "Motor Temperature"]},
+    {group:"Chasis Sensors", sensors: ["Sensor Q", "Sensor R", "Sensor F"]},
     {group:"Aero Sensors", sensors: ["Sensor G", "Sensor H", "Sensor I"]},
     {group:"Suspension Sensors", sensors: ["Sensor J", "Sensor K", "Sensor L"]},
     {group:"Powertrain Sensors", sensors: ["Sensor M", "Sensor N", "Sensor O"]}
@@ -142,8 +142,15 @@ let ExampleSensorsByGroups = [
 
 
 let ExampleSensorsLettersToNames = {
-  "Sensor A": "FL_BRAKE_TEMP",
-  "Sensor B": "FL_WHEEL_SPEED"
+  "Front Left Wheel Speed": "FL_WHEEL_SPEED", 
+  "Brake Pressure": "BRAKE_PRESSURE",
+  "HV Battery Voltage": "HV_BATTERY_VOLTAGE", 
+  "Battery Temperature": "BATTERY_TEMP",
+  "Coolant Temperature": "COOLANT_TEMP", 
+  "Power Output": "POWER_OUTPUT", 
+  "State of Charge (SoC)": "CHARGE_STATE",
+  "Throttle": "THROTTLE", 
+  "Motor Temperature": "MOTOR_TEMP", 
 }
 
 

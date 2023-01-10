@@ -40,8 +40,15 @@ export default function Numbers(props) {
 
 
   const ExampleSensorsLettersToNames = {
-    "Sensor A": ["FL_BRAKE_TEMP", "°C"],
-    "Sensor B": ["FL_WHEEL_SPEED", "m/s"]
+    "Front Left Wheel Speed": ["FL_WHEEL_SPEED", "Speed (m/s)"],
+    "Brake Pressure": ["BRAKE_PRESSURE", "Pounds/Square-Inch (PSI)"],
+    "HV Battery Voltage": ["HV_BATTERY_VOLTAGE", "Volts (V)"],
+    "Battery Temperature": ["BATTERY_TEMP", "Temperature  (°C)"],
+    "Coolant Temperature": ["COOLANT_TEMP", "Temperature  (°C)"],
+    "Power Output": ["POWER_OUTPUT", "Power (kW)"],
+    "State of Charge (SoC)": ["CHARGE_STATE", "Percent (%)"],
+    "Throttle": ["THROTTLE", "Percent (%)"],
+    "Motor Temperature": ["MOTOR_TEMP", "Temperature (°C)"]
   }
   //context.sensorData[ExampleSensorsLettersToNames[e.value]][context.sensorData[ExampleSensorsLettersToNames[e.value]].length-1][1]}
   function updateSensorValue(sensorName) {
