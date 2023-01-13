@@ -21,7 +21,7 @@ import { Context} from "../../shared/Context"
 
 
 /*****************  INIT (but its british??)  ****************/
-const n = 30; // amount of seconds to show
+const n = 20; // amount of seconds to show
 var initUnix = parseInt(Date.now()/1000)
 let initData = initialise(); //data arr
 function initialise() {
