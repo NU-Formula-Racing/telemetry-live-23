@@ -21,7 +21,8 @@ import { Context} from "../../shared/Context"
 
 
 /*****************  INIT (but its british??)  ****************/
-const n = 1000; // amount of seconds to show
+const n = 30; // amount of seconds to show
+var initUnix = parseInt(Date.now()/1000)
 let initData = initialise(); //data arr
 function initialise() {
     var time = -1;
@@ -49,7 +50,6 @@ export default function Graph(props) {
     const width = props.width > 500 ? props.width * 0.9 : 450
     const graph_offset = 30
     const curveType = 'curveLinear'
-
     // data accessors
     const getX = (d) => d.time;
     const getY = (d) => d.value;
@@ -65,6 +65,7 @@ export default function Graph(props) {
         "Motor Temperature": ["MOTOR_TEMP", "Temperature (°C)"]
       }
     // scales
+
     let xScaleInit = scaleLinear({
         domain: [0, max(initData, getX)],
         range: [0, width - 3*graph_offset]
@@ -86,31 +87,30 @@ export default function Graph(props) {
     /*****************  UPDATERS  ****************/
     // automate the clicking (or updating) of the live graph
 
-    // autopopulate the graph
+    //autopopulate the graph during live
+
     useEffect(() => {
-        const interval = setInterval(() => {
         let graphsArr = document.getElementsByClassName("clickMe")
           if (context.live) {
             for (let i = 0; i < graphsArr.length; i++) {
                 graphsArr[i].click();
               }
           }
-        }, 500);
-        return () => clearInterval(interval);
-      }, []);
+      }, [context.sensorData]);
 
-      useEffect(() => {
-        const interval = setInterval(() => {
-        let graphsArr = document.getElementsByClassName("clickMe")
-        setClickCount(clickCount+1)
-          if (!context.live && count < clickCount) {
-            for (let i = 0; i < graphsArr.length; i++) {
-                graphsArr[i].click();
-              }
-          }
-        }, 1000);
-        return () => clearInterval(interval);
-      }, []);
+    // historical autopopulate
+    //   useEffect(() => {
+    //     const interval = setInterval(() => {
+    //     let graphsArr = document.getElementsByClassName("clickMe")
+    //     setClickCount(clickCount+1)
+    //       if (!context.live && count < clickCount) {
+    //         for (let i = 0; i < graphsArr.length; i++) {
+    //             graphsArr[i].click();
+    //           }
+    //       }
+    //     }, 1000);
+    //     return () => clearInterval(interval);
+    //   }, []);
 
 
       /***************** UPDATES **********************/
@@ -165,19 +165,18 @@ export default function Graph(props) {
     }
 
     function updateData(gd, e) {
-        
-        // setCount(count + 1)
+
         let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]]
         // setClickCount(sensorArr.length)
         if (sensorArr) {
-
-        if (count < sensorArr.length-1) {
-            setCount(count + 1)
-        }
+            setCount(sensorArr.length-1)
+        // if (count < sensorArr.length-1) {
+        //     setCount(count + 1)
+        // }
         var tvPair = sensorArr[sensorArr.length-1]
         if (count >= sensorArr.length) {
             if (sensorArr !== []) {
-                console.log(context.sensorData[ExampleSensorsLettersToNames[props.sensorName]])
+                // console.log(context.sensorData[ExampleSensorsLettersToNames[props.sensorName]])
                 let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1[0]]
             }
         }
@@ -185,15 +184,26 @@ export default function Graph(props) {
             tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][count]
         }
         let start = gd.start
-        if (gd.end >= n) { start = gd.start + 1}
+        if (gd.end >= n) { // overloaded data
+            start = gd.start + 1;
+        }
         let end = gd.end + 1;
         var firstTime =  context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][0][0]
 
         var currTime = parseUnixToStr(tvPair[0])
-        var obj = {
-            time: tvPair[0]-firstTime,
-            value: tvPair[1]
-        };
+        if (tvPair[0] < initUnix && context.live) {
+            var obj = {
+                time: 0,
+                value: 0
+            };
+        }
+        else {
+            var obj = {
+                time: tvPair[0]-initUnix,
+                value: tvPair[1]
+            };
+        }
+
         let temp = [...gd.lineData];
         temp.push(obj);
         if (isScrolling){
@@ -381,7 +391,7 @@ export default function Graph(props) {
                     {/* axis and grids */}
                     <GridRows scale={graphData.yScale} width={width - graph_offset*3} stroke="#e0e0e0"/>
                     <GridColumns scale={graphData.xScale} height={height-60} stroke="#e0e0e0" top={30}/>
-                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"Time"} tickFormat={(v: Date, i: number) =>parseSecToTime(i*100)} />
+                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"Time"} tickFormat={(v: Date, i: number) =>parseSecToTime(i)} />
                     <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={ExampleSensorsLettersToNames[props.sensorName][1]}/>
                     {/* plots line */}
                     {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (

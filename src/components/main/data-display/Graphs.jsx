@@ -29,12 +29,13 @@ export default function Graphs(props) {
             const retrieveSensorAPI = () => {
             sensorData.then((a) => {
             context.setSensorData(a)
+            console.log(a)
             });
             };
             retrieveSensorAPI();
       }
-    }, 500);
-    return () => clearInterval(interval);
+    }, 1000);
+    // return () => clearInterval(interval);
   }, []);
 
   return (

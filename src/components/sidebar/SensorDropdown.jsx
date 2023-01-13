@@ -43,7 +43,6 @@ export default class SensorDropdown extends Component {
           let desiredSensor = ExampleSensorsLettersToNames[value[0]["value"]]
           this.desiredSensors.push(desiredSensor)
           this.context.setSelectedSensors(this.desiredSensors)
-          console.log(this.context.selectedSensors)
           // REPLACE THIS
           // PART OF SESSION TOBE DYNAMIC
           let reqBody = {}

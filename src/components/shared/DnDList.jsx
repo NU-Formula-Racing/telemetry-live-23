@@ -179,6 +179,7 @@ export default function DndList(props) {
         />
       }      
       {proppedChildren}
+      <div></div>
     </FlexTray>
   );
 }
