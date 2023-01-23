@@ -1,6 +1,6 @@
 function getSensorsBySession(sessionName){
     console.log(sessionName);
-        fetch("http://127.0.0.1:5000/get-session", 
+        fetch("http://flask-env.eba-hqnsx3mt.us-east-2.elasticbeanstalk.com/get-session", 
         {
           method: "POST", 
           headers: { 'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ function getSensorsBySession(sessionName){
       }
 
 
-      const address = fetch("http://127.0.0.1:5000/get-items",
+      const address = fetch("http://flask-env.eba-hqnsx3mt.us-east-2.elasticbeanstalk.com/get-items",
       {
         method: "GET", 
         headers: { 'Content-Type': 'application/json',

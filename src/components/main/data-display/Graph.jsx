@@ -22,7 +22,6 @@ import { Context} from "../../shared/Context"
 
 /*****************  INIT (but its british??)  ****************/
 const n = 20; // amount of seconds to show
-var initUnix = parseInt(Date.now()/1000)
 let initData = initialise(); //data arr
 function initialise() {
     var time = -1;
@@ -169,10 +168,10 @@ export default function Graph(props) {
         let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]]
         // setClickCount(sensorArr.length)
         if (sensorArr) {
-            setCount(sensorArr.length-1)
-        // if (count < sensorArr.length-1) {
-        //     setCount(count + 1)
-        // }
+            // setCount(sensorArr.length-1)
+        if (count < sensorArr.length-1) {
+            setCount(count + 1)
+        }
         var tvPair = sensorArr[sensorArr.length-1]
         if (count >= sensorArr.length) {
             if (sensorArr !== []) {
@@ -183,6 +182,10 @@ export default function Graph(props) {
         else{
             tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][count]
         }
+        console.log(count, sensorArr.length)
+        if (count >= sensorArr.length-1) {
+            return
+        }
         let start = gd.start
         if (gd.end >= n) { // overloaded data
             start = gd.start + 1;
@@ -191,18 +194,10 @@ export default function Graph(props) {
         var firstTime =  context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][0][0]
 
         var currTime = parseUnixToStr(tvPair[0])
-        if (tvPair[0] < initUnix && context.live) {
-            var obj = {
-                time: 0,
-                value: 0
-            };
-        }
-        else {
-            var obj = {
-                time: tvPair[0]-initUnix,
-                value: tvPair[1]
-            };
-        }
+        var obj = {
+            time: tvPair[0]-firstTime,
+            value: tvPair[1]
+        };
 
         let temp = [...gd.lineData];
         temp.push(obj);
@@ -391,7 +386,7 @@ export default function Graph(props) {
                     {/* axis and grids */}
                     <GridRows scale={graphData.yScale} width={width - graph_offset*3} stroke="#e0e0e0"/>
                     <GridColumns scale={graphData.xScale} height={height-60} stroke="#e0e0e0" top={30}/>
-                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"Time"} tickFormat={(v: Date, i: number) =>parseSecToTime(i)} />
+                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"Time"} tickFormat={(value: number, i: number) =>parseSecToTime(value)} />
                     <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={ExampleSensorsLettersToNames[props.sensorName][1]}/>
                     {/* plots line */}
                     {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (

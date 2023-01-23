@@ -55,7 +55,7 @@ export default class SensorDropdown extends Component {
           // console.log(reqBody)
 
           // POST request with current sensors selected to use for datpoint plotting later
-          var sensorData = fetch("http://127.0.0.1:5000/get-sensors", 
+          var sensorData = fetch("http://flask-env.eba-hqnsx3mt.us-east-2.elasticbeanstalk.com/get-sensors", 
           {
             method: "POST", 
             headers: { 'Content-Type': 'application/json',

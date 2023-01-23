@@ -50,7 +50,7 @@ const IconOption = props => {
 }
 
 
-const address = fetch("http://127.0.0.1:5000/get-items",
+const address = fetch("http://flask-env.eba-hqnsx3mt.us-east-2.elasticbeanstalk.com/get-items",
 {
   method: "GET", 
   headers: { 'Content-Type': 'application/json',

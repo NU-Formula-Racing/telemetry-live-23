@@ -16,7 +16,7 @@ function getSensorsBySession(sessionName){
 
 const p = document.getElementById("myPelement")
 function getMetadata(){
-      fetch("http://127.0.0.1:5000/get-items",
+      fetch("http://flask-env.eba-hqnsx3mt.us-east-2.elasticbeanstalk.com/get-items",
       {
         method: "GET", 
         headers: { 'Content-Type': 'application/json',
