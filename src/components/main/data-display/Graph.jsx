@@ -208,6 +208,7 @@ export default function Graph(props) {
                 ...prevState,
                 lineData: temp,
               }));
+              setScrolling(!isScrolling)
         } else {
             setGD(prevState => ({
                 ...prevState,
@@ -215,6 +216,7 @@ export default function Graph(props) {
                 start: start,
                 end: end
               }));
+              console.log(temp)
         }
         handleTooltip(e);
     }
@@ -282,7 +284,7 @@ export default function Graph(props) {
                 start = gd.start + amt
                 end = gd.end + amt
             } else {return}
-        } else if (dir == "left"){
+        } else if (dir == "left" || orient <= 0){
             if (gd.start <= 1){return}
             else{setOrient(orient-1)}
             if (gd.start > amt) {
