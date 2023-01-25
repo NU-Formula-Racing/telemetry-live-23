@@ -81,6 +81,7 @@ export default function Graph(props) {
     const buttonRef = useRef(null)
     const [count, setCount] = useState(0)
     const [clickCount, setClickCount] = useState(100)
+    const [orient, setOrient] = useState(0)
     var historical_count = 0
     
     /*****************  UPDATERS  ****************/
@@ -171,6 +172,7 @@ export default function Graph(props) {
             // setCount(sensorArr.length-1)
         if (count < sensorArr.length-1) {
             setCount(count + 1)
+            setOrient(count+1)
         }
         var tvPair = sensorArr[sensorArr.length-1]
         if (count >= sensorArr.length) {
@@ -271,12 +273,18 @@ export default function Graph(props) {
 
     function scroll(gd, dir, amt,e){
         let start, end;
+        console.log(orient, count)
+        console.log(gd.start)
         if (dir == "right"){
+            if (orient >= count){return}
+            else{setOrient(orient+1)}
             if (gd.end < max(gd.lineData, getX) - amt) {
                 start = gd.start + amt
                 end = gd.end + amt
             } else {return}
         } else if (dir == "left"){
+            if (gd.start <= 1){return}
+            else{setOrient(orient-1)}
             if (gd.start > amt) {
                 start = gd.start - amt
                 end = gd.end - amt
