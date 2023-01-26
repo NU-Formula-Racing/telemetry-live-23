@@ -157,10 +157,12 @@ export default function Graph(props) {
     }
 
     function parseSecToTime(seconds) {
-        var hours = Math.floor(seconds / 3600)
-        var minutes = Math.floor((seconds % 3600) / 60)
-        var seconds = (seconds % 3600) % 60
-        return hours + ":" + minutes + ":" + seconds
+        var hours = parseInt(Math.floor(seconds / 3600))
+        var minutes = parseInt(Math.floor((seconds % 3600) / 60))
+        var cleanSeconds = parseInt((seconds % 3600) % 60)
+        const milDiff = seconds-parseInt(seconds)
+        var milliseconds = 10*(Math.round(1000*milDiff)/1000);
+        return hours + ":" + minutes + ":" + cleanSeconds + "." + milliseconds
 
     }
 
@@ -177,14 +179,12 @@ export default function Graph(props) {
         var tvPair = sensorArr[sensorArr.length-1]
         if (count >= sensorArr.length) {
             if (sensorArr !== []) {
-                // console.log(context.sensorData[ExampleSensorsLettersToNames[props.sensorName]])
                 let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1[0]]
             }
         }
         else{
             tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][count]
         }
-        console.log(count, sensorArr.length)
         if (count >= sensorArr.length-1) {
             return
         }
@@ -216,7 +216,6 @@ export default function Graph(props) {
                 start: start,
                 end: end
               }));
-              console.log(temp)
         }
         handleTooltip(e);
     }
@@ -275,8 +274,6 @@ export default function Graph(props) {
 
     function scroll(gd, dir, amt,e){
         let start, end;
-        console.log(orient, count)
-        console.log(gd.start)
         if (dir == "right"){
             if (orient >= count){return}
             else{setOrient(orient+1)}
