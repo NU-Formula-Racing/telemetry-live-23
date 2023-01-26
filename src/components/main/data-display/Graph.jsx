@@ -21,7 +21,7 @@ import { Context} from "../../shared/Context"
 
 
 /*****************  INIT (but its british??)  ****************/
-const n = 1000; // amount of seconds to show
+const n = 20; // amount of seconds to show
 let initData = initialise(); //data arr
 function initialise() {
     var time = -1;
@@ -38,6 +38,8 @@ function initialise() {
     return arr;
 }
 
+
+
 // CONTINUOUSLY CALL API TO UPDATE REACT ON CHANGES IN
 
 export default function Graph(props) {
@@ -47,15 +49,22 @@ export default function Graph(props) {
     const width = props.width > 500 ? props.width * 0.9 : 450
     const graph_offset = 30
     const curveType = 'curveLinear'
-
     // data accessors
     const getX = (d) => d.time;
     const getY = (d) => d.value;
     const ExampleSensorsLettersToNames = {
-        "Sensor A": "FL_BRAKE_TEMP",
-        "Sensor B": "FL_WHEEL_SPEED"
+        "Front Left Wheel Speed": ["FL_WHEEL_SPEED", "Speed (m/s)"],
+        "Brake Pressure": ["BRAKE_PRESSURE", "Pounds/Square-Inch (PSI)"],
+        "HV Battery Voltage": ["HV_BATTERY_VOLTAGE", "Volts (V)"],
+        "Battery Temperature": ["BATTERY_TEMP", "Temperature (°C)"],
+        "Coolant Temperature": ["COOLANT_TEMP", "Temperature (°C)"],
+        "Power Output": ["POWER_OUTPUT", "Power (kW)"],
+        "State of Charge (SoC)": ["CHARGE_STATE", "Percent (%)"],
+        "Throttle": ["THROTTLE", "Percent (%)"],
+        "Motor Temperature": ["MOTOR_TEMP", "Temperature (°C)"]
       }
     // scales
+
     let xScaleInit = scaleLinear({
         domain: [0, max(initData, getX)],
         range: [0, width - 3*graph_offset]
@@ -71,30 +80,38 @@ export default function Graph(props) {
     const wheelTimeout = useRef()
     const buttonRef = useRef(null)
     const [count, setCount] = useState(0)
+    const [clickCount, setClickCount] = useState(100)
+    const [orient, setOrient] = useState(0)
     var historical_count = 0
     
     /*****************  UPDATERS  ****************/
     // automate the clicking (or updating) of the live graph
-    useEffect(() => {
-        const interval = setInterval(() => {
-          if (context.live) {
-            document.getElementById("clickMe").click();
-          }
-        }, 500);
-        return () => clearInterval(interval);
-      }, []);
 
-    //   second use effect spams uppon initialization
+    //autopopulate the graph during live
+
+    useEffect(() => {
+        let graphsArr = document.getElementsByClassName("clickMe")
+          if (context.live) {
+            for (let i = 0; i < graphsArr.length; i++) {
+                graphsArr[i].click();
+              }
+          }
+      }, [context.sensorData]);
+
+    // historical autopopulate
     //   useEffect(() => {
     //     const interval = setInterval(() => {
-    //       if (historical_count < 12) {
-    //         document.getElementById("clickMe").click();
-    //         historical_count += 1
-    //         // console.log(count)
+    //     let graphsArr = document.getElementsByClassName("clickMe")
+    //     setClickCount(clickCount+1)
+    //       if (!context.live && count < clickCount) {
+    //         for (let i = 0; i < graphsArr.length; i++) {
+    //             graphsArr[i].click();
+    //           }
     //       }
-    //     }, 50);
+    //     }, 1000);
     //     return () => clearInterval(interval);
     //   }, []);
+
 
       /***************** UPDATES **********************/
 
@@ -117,36 +134,73 @@ export default function Graph(props) {
         }));
     }
 
-    function parseTimeInt(timeStr){
-        let timeArr = timeStr.split(":")
-        return parseInt(timeArr[0])*60+parseInt(timeArr[1])
+    // function parseTimeInt(timeStr){
+    //     let timeArr = timeStr.split(":")
+    //     return parseInt(timeArr[0])*60+parseInt(timeArr[1])
+    // }
+
+    function parseUnixToStr(unixVal) {
+        let unix_timestamp = unixVal
+        // Create a new JavaScript Date object based on the timestamp
+        // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+        var date = new Date(unix_timestamp * 1000);
+        // Hours part from the timestamp
+        var hours = date.getHours();
+        // Minutes part from the timestamp
+        var minutes = "0" + date.getMinutes();
+        // Seconds part from the timestamp
+        var seconds = "0" + date.getSeconds();
+
+        // Will display time in 10:30:23 format
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        return formattedTime
     }
+
+    function parseSecToTime(seconds) {
+        var hours = parseInt(Math.floor(seconds / 3600))
+        var minutes = parseInt(Math.floor((seconds % 3600) / 60))
+        var cleanSeconds = parseInt((seconds % 3600) % 60)
+        const milDiff = seconds-parseInt(seconds)
+        var milliseconds = 10*(Math.round(1000*milDiff)/1000);
+        return hours + ":" + minutes + ":" + cleanSeconds + "." + milliseconds
+
+    }
+
     function updateData(gd, e) {
-        // console.log(context.sensorData)
-        // console.log(context.selectedSensors)
-        
-        // setCount(count + 1)
-        let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]]
+
+        let sensorArr = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]]
+        // setClickCount(sensorArr.length)
+        if (sensorArr) {
+            // setCount(sensorArr.length-1)
         if (count < sensorArr.length-1) {
             setCount(count + 1)
+            setOrient(count+1)
         }
-        console.log(sensorArr.length-1)
-        console.log(count)
         var tvPair = sensorArr[sensorArr.length-1]
         if (count >= sensorArr.length) {
-            let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1]
+            if (sensorArr !== []) {
+                let tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][sensorArr.length-1[0]]
+            }
         }
         else{
-            tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName]][count]
+            tvPair = context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][count]
+        }
+        if (count >= sensorArr.length-1) {
+            return
         }
         let start = gd.start
-        if (gd.end >= n) { start = gd.start + 1}
+        if (gd.end >= n) { // overloaded data
+            start = gd.start + 1;
+        }
         let end = gd.end + 1;
+        var firstTime =  context.sensorData[ExampleSensorsLettersToNames[props.sensorName][0]][0][0]
+
+        var currTime = parseUnixToStr(tvPair[0])
         var obj = {
-            // time: gd.lineData.length,
-            time: parseTimeInt(tvPair[0]),
+            time: tvPair[0]-firstTime,
             value: tvPair[1]
         };
+
         let temp = [...gd.lineData];
         temp.push(obj);
         if (isScrolling){
@@ -154,6 +208,7 @@ export default function Graph(props) {
                 ...prevState,
                 lineData: temp,
               }));
+              setScrolling(!isScrolling)
         } else {
             setGD(prevState => ({
                 ...prevState,
@@ -163,6 +218,7 @@ export default function Graph(props) {
               }));
         }
         handleTooltip(e);
+    }
     }
 
 
@@ -217,17 +273,17 @@ export default function Graph(props) {
     }
 
     function scroll(gd, dir, amt,e){
-        // if (liveData) {
-        //     console.log("kill me now")
-        //     return
-        // }
         let start, end;
         if (dir == "right"){
+            if (orient >= count){return}
+            else{setOrient(orient+1)}
             if (gd.end < max(gd.lineData, getX) - amt) {
                 start = gd.start + amt
                 end = gd.end + amt
             } else {return}
-        } else if (dir == "left"){
+        } else if (dir == "left" || orient <= 0){
+            if (gd.start <= 1){return}
+            else{setOrient(orient-1)}
             if (gd.start > amt) {
                 start = gd.start - amt
                 end = gd.end - amt
@@ -275,10 +331,6 @@ export default function Graph(props) {
     useEffect(() => {
         updateScales()
     }, [graphData.lineData, graphData.start, graphData.end])
-    // useEffect(() => {
-    //     console.log(isScrolling)
-    // }, [isScrolling])
-   
     /*****************  TOOLTIP BULLSHIT  ****************/
     // takes left of time
     const bisectTime = bisector((d) => d.time).left;
@@ -310,13 +362,15 @@ export default function Graph(props) {
         [showTooltip, graphData.yScale, graphData.xScale],
       );
 
+
+
   return (
         <GraphContainer
             onKeyDown={(e) => checkKey(e)}
             onMouseEnter={() => {props.sendIndex(); props.sendStart();}}
             onMouseLeave={() => {props.removeIndex(); props.removeStart();}}
         >
-            <button id="clickMe" onClick={(e) => updateData(graphData,e)}>update</button> <br/>
+            <button className='clickMe' onClick={(e) => updateData(graphData,e)}>update</button> <br/>
             {/* navigation buttons */}
             <ButtonTray width={width}>
                 <div>
@@ -339,8 +393,8 @@ export default function Graph(props) {
                     {/* axis and grids */}
                     <GridRows scale={graphData.yScale} width={width - graph_offset*3} stroke="#e0e0e0"/>
                     <GridColumns scale={graphData.xScale} height={height-60} stroke="#e0e0e0" top={30}/>
-                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"bottom axis label"}/>
-                    <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={"left axis label"}/>
+                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"Time"} tickFormat={(value: number, i: number) =>parseSecToTime(value)} />
+                    <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={ExampleSensorsLettersToNames[props.sensorName][1]}/>
                     {/* plots line */}
                     {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (
                         <circle

@@ -89,7 +89,6 @@ export default function DndList(props) {
         }
       }
     }
-    // console.log(mouseX);
   }, [context.dragging])
 
   useEffect(() => {
@@ -180,6 +179,7 @@ export default function DndList(props) {
         />
       }      
       {proppedChildren}
+      <div></div>
     </FlexTray>
   );
 }

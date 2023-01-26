@@ -66,7 +66,7 @@ export default function Graph() {
             d = x0.valueOf() - getX(d0).valueOf() > getX(d1).valueOf() - x0.valueOf() ? d1 : d0;
           }
           showTooltip({
-            tooltipData: d,
+            tooltipData: (d),
             tooltipLeft: xScale(getX(d)),
             tooltipTop: yScale(getY(d)),
           });

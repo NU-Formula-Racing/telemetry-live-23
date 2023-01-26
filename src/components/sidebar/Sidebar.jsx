@@ -6,7 +6,7 @@ import NameInput from './NameInput';
 import AddressInput from './AddressInput';
 import BasicContainer from '../shared/BasicContainer';
 import VertSpacer from '../shared/VertSpacer';
-import { Context} from '../shared/Context';
+
 
 import logo from '../../assets/logo.png';
 

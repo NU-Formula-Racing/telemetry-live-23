@@ -11,6 +11,8 @@ import StyledStatus from '../../shared/StyledStatus';
 
 export default class DataDisplay extends Component {
   static contextType = Context;
+
+  
   constructor(props) {
     super(props);
 
