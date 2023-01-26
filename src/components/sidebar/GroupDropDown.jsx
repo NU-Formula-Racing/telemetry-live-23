@@ -40,7 +40,7 @@ export const SmallVerticalSpacer = styled.div`
 
 let ExampleGroups = [
     {id: 1, group:"Safety Sensors"},
-    {id: 2, group:"Chasis Sensors"},
+    {id: 2, group:"Chassis Sensors"},
     {id: 3, group:"Aero Sensors"},
     {id: 4, group:"Suspension Sensors"},
     {id: 5, group:"Powertrain Sensors"}

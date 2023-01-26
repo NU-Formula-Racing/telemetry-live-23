@@ -133,7 +133,7 @@ export default class SensorDropdown extends Component {
 //{this.selected.map((x) => (<p>{x.label}</p>))}
 let ExampleSensorsByGroups = [
     {group:"Safety Sensors", sensors: ["Front Left Wheel Speed", "Brake Pressure", "HV Battery Voltage", "Battery Temperature", "Coolant Temperature", "Power Output", "State of Charge (SoC)", "Throttle", "Motor Temperature"]},
-    {group:"Chasis Sensors", sensors: ["Sensor Q", "Sensor R", "Sensor F"]},
+    {group:"Chassis Sensors", sensors: ["Sensor Q", "Sensor R", "Sensor F"]},
     {group:"Aero Sensors", sensors: ["Sensor G", "Sensor H", "Sensor I"]},
     {group:"Suspension Sensors", sensors: ["Sensor J", "Sensor K", "Sensor L"]},
     {group:"Powertrain Sensors", sensors: ["Sensor M", "Sensor N", "Sensor O"]}
