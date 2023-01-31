@@ -1,9 +1,9 @@
 {
-  "name": "nfr21-telemetry",
+  "name": "nfr23-telemetry",
   "version": "0.1.0",
   "private": true,
   "main": "./electron/main.js",
-  "homepage": "https://nu-formula-racing.github.io/NFR21-Telemetry/",
+  "homepage": "http://telemetry.northwesternformularacing.com/",
   "dependencies": {
     "@progress/kendo-data-query": "^1.5.5",
     "@progress/kendo-drawing": "^1.15.0",
